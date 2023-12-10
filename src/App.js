@@ -5,9 +5,10 @@ import './App.css';
 function App() {
 
   const [gameData, setGameData] = useState([]);
-  const [title, setTitle] = useState('')
-  const [tag1, setTag1] = useState('')
-  const [tag2, setTag2] = useState('')
+  const [title, setTitle] = useState('');
+  const [tag1, setTag1] = useState('');
+  const [tag2, setTag2] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // This effect will run whenever gameData is updated
@@ -15,15 +16,18 @@ function App() {
   }, [gameData]);
 
   const submitHandler = e => {
+    setLoading(true);
     axios.get('http://localhost:8080/title',{ params: {title: title}}).then((response) => {
       console.log(response.data)
       setGameData(response.data)
       console.log(gameData)
       setTitle('')
     })
+    .finally(() => setLoading(false));
   }
 
   const submitOther = e => {
+    setLoading(true);
     axios.get('http://localhost:8080/tags',{ params: {tag1: tag1, tag2: tag2}}).then((response) => {
       console.log(response.data)
       setGameData(response.data)
@@ -31,18 +35,22 @@ function App() {
       setTag1('')
       setTag2('')
     })
+    .finally(() => setLoading(false));
   }
 
   const submitNORM = e => {
+    setLoading(true);
     axios.get('http://localhost:8080').then((response) => {
       console.log(response.data)
       setGameData(response.data)
       console.log(gameData)
     })
+    .finally(() => setLoading(false));
   }
 
   return (
     <div className="App">
+      {loading && <div>Loading...</div>}
       <header className="App-header">
         <p>Vapor: Game Recommendation System</p>
         <button onClick={submitNORM}>Show All</button>
